@@ -1,94 +1,26 @@
-/* eslint-disable no-undef */
-import { useState, useEffect } from "react";
-// Componentes
-import Header from "./components/Header/Header";
-import Tasks from "./components/Tasks/Tasks";
-import axios from "axios";
-
-// Algum jeito para tirar essas funções e essa bagunça daqui
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Pessoal from "./pages/Pessoal";
+import Profissional from "./pages/Profissional";
+import Home from "./pages/Home";
+import Sidebar from "./components/navbar/Sidebar";
 
 function App() {
-  const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState("");
-  const [error, setError] = useState(""); // Estado para a mensagem de erro
-
-  // Mostrar todas as tarefas
-  const showAllTasks = () => {
-    axios
-      .get("http://localhost:5001/tasks")
-      .then((response) => {
-        setTasks(response.data);
-      })
-      .catch((error) => {
-        console.log("Erro ao mostrar todas as tarefas", error);
-      });
-  };
-
-  // Chama a função showAllTasks quando o componente é montado
-  useEffect(() => {
-    showAllTasks();
-  }, []);
-
-  //Adicionar uma nova tarefa.
-  const addTask = () => {
-    console.log("Valor de newTask:", newTask); // Verifica o valor que está sendo enviado
-    if (!newTask.trim()) {
-      setError("Por favor, digite uma tarefa");
-      return; // Impedir o envio se o título estiver vazio
-    }
-    setError(""); // apagar a mensagem carro correto
-
-    axios
-      .post("http://localhost:5001/tasks", { title: newTask })
-      .then((response) => {
-        setTasks([...tasks, response.data]);
-        setNewTask("");
-      })
-      .catch((error) => {
-        console.log("ERRO AO ADICIONAR UMA TAREFA", error);
-      });
-  };
-
-  // Alterar o status da tarefa (concluida ou não concluida) Deletar
-  const toggleTask = (id, completed) => {
-    axios
-      .put(`http://localhost:5001/tasks/${id}`, { completed: !completed })
-      .then((response) => {
-        setTasks(tasks.map((task) => (task.id === id ? response.data : task)));
-      })
-      .catch((error) => {
-        console.log("ERRO AO ATUALIZAR A TAREFA", error);
-      });
-  };
-
-  // Deletar uma tarefa
-  const deleteTask = (id) => {
-    axios.delete(`http://localhost:5001/task/${id}`).then(() => {
-      setTasks(tasks.filter((task) => task.id !== id)).catch((error) => {
-        console.log("Não foi possivel deletar a tarefa", error);
-      });
-    });
-  };
-
-  // Filtrar tarefas ativas e completadas
-  const activeTasks = tasks.filter((task) => !task.completed);
-  const completedTasks = tasks.filter((task) => task.completed);
-
   return (
-    <>
-      <Header
-        onAddTask={addTask}
-        newTask={newTask}
-        setNewTask={setNewTask}
-        error={error}
-      ></Header>
-      <Tasks
-        tasks={activeTasks}
-        onDelete={deleteTask}
-        onComplete={toggleTask}
-        completedTasks={completedTasks}
-      ></Tasks>
-    </>
+    <Router>
+      <div>
+        <Sidebar />
+        <div className="pages">
+          <Routes>
+            <Route path="/" element={<Home></Home>} />
+            <Route path="/pessoal" element={<Pessoal></Pessoal>} />
+            <Route
+              path="/profissional"
+              element={<Profissional></Profissional>}
+            />
+          </Routes>
+        </div>
+      </div>
+    </Router>
   );
 }
 

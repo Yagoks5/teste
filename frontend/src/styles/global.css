@@ -11,6 +11,11 @@ body {
   min-height: 100vh;
 }
 
-button {
-  cursor: pointer;
+.pages {
+  flex: 1; /* Permite que o conteúdo ocupe o restante do espaço */
+  margin: 0; /* Remover margem para um melhor controle de layout */
+  padding: 20px; /* Adiciona espaçamento interno */
+  display: flex;
+  justify-content: center; /* Centraliza o conteúdo horizontalmente */
+  align-items: center;
 }
